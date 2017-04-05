@@ -69,6 +69,15 @@ if 'codeschool.cli' in settings.INSTALLED_APPS:
         url(r'^cli/jsonrpc/', include(jsonrpc_api.urls)),
     ]
 
+# Sparta activity
+if 'codeschool.sparta' in settings.INSTALLED_APPS:
+    import codeschool.sparta.urls
+
+    print('sparta')
+    urlpatterns += [
+        url(r'^sparta/', include(codeschool.sparta.urls)),
+    ]
+
 # Wagtail endpoint (these must come last)
 urlpatterns += [
     wagtail_urls.urlpatterns[0],

@@ -13,3 +13,8 @@ if DEBUG:
     for _var, _value in list(_ns.items()):
         if _var.startswith('CODESCHOOL'):
             _ns[_var] = os.environ.get(_var, _value)
+
+try:
+	from . import local
+except ImportError:
+	pass

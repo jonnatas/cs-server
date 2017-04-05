@@ -32,3 +32,4 @@ docker/db/db.sqlite3
 collect/media/*
 logs/
 backup/
+src/codeschool/settings/local.py
