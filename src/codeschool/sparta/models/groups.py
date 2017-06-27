@@ -3,6 +3,10 @@ from django.db import IntegrityError
 
 from codeschool import models
 from codeschool.utils.phrases import phrase
+<<<<<<< HEAD
+=======
+from itertools import cycle
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
 
 
 class SpartaGroup(models.TimeStampedModel):
@@ -20,7 +24,11 @@ class SpartaGroup(models.TimeStampedModel):
         max_length=140,
     )
     status = models.IntegerField(
+<<<<<<< HEAD
         default = STATUS_INACTIVE,
+=======
+        default=STATUS_INACTIVE,
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
         choices=[
             (STATUS_INACTIVE, _('inactive')),
             (STATUS_ACTIVE, _('active')),
@@ -65,7 +73,11 @@ class SpartaGroup(models.TimeStampedModel):
                 if n == max_iter - 1:
                     raise
 
+<<<<<<< HEAD
     def add_user(self, user, role):
+=======
+    def add_users(self, users, quantity_tutors):
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
         """
         Add new user to group.
 
@@ -75,9 +87,24 @@ class SpartaGroup(models.TimeStampedModel):
              role (str):
                 The user role on the group 'learner' or 'tutor'.
         """
+<<<<<<< HEAD
 
         role = ROLE_MAPPING[role]
         SpartaMembership.objects.create(group=self, user=user, role=role)
+=======
+        # Irá atribuir a role tutor ao usuario com maior nota, adiciona-lo ao grupo e exclui-lo do dicionario
+        for _ in quantity_tutors:
+            user_grade_max = max(users, key=users.get)
+            role = ROLE_MAPPING[ROLE_TUTOR]
+            SpartaMembership.objects.create(group=self, user=user_grade_max, role=role)
+            users.pop(user_grade_max)
+
+        # Irá adicionar a role learner aos usuarios restantes, adiciona-los ao grupo e excluir do dicionario
+        for user in users:
+            role = ROLE_MAPPING[ROLE_LEARNER]
+            SpartaMembership.objects.create(group=self, user=user, role=role)
+            users.pop(user)
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
 
 
 class SpartaMembership(models.TimeStampedModel):
@@ -108,7 +135,11 @@ ROLE_MAPPING = {
 }
 
 
+<<<<<<< HEAD
 def organize_groups(users, group_size):
+=======
+def organize_groups(mapping, group_size):
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
     """
     Receives a mapping from users to grades and return a list of groups
     with the approximate ``group_size``.
@@ -121,11 +152,15 @@ def organize_groups(users, group_size):
             A dictionary from users to their respective grades.
         group_size (int):
             The desired group size.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
     Examples:
 
         >>> users = {'john': 10, 'paul': 9, 'george': 8, 'ringo': 6}
         >>> organize_groups(users, 2)
+<<<<<<< HEAD
         [['john', 'ringo'], ['paul', 'george']]
     """
     assert isinstance(group_size, int)
@@ -182,3 +217,37 @@ def get_min_grade_user(users):
             del new_users_dict[user]
             return (user, new_users_dict)
     return
+=======
+        [{'john': 10,'ringo': 6}, {'paul': 8, 'george': 8}]
+    """
+    users_quantity = len(mapping)
+
+    if group_size > users_quantity:
+        return [mapping.copy()]
+
+    n_groups = users_quantity // group_size
+    remaining_users = users_quantity % group_size
+
+    # Initialize possible groups as empty lists
+    groups = [{} for _ in range(n_groups)]
+
+    sorted_users = sorted(mapping.items(), key=lambda x: x[1])
+
+    for idx in cycle([0, -1]):
+        if len(sorted_users) < n_groups:
+            break
+
+        for i in range(n_groups):
+            name, grade = sorted_users.pop(idx)
+            groups[i][name] = grade
+
+    j = 0
+    for i, user in enumerate(sorted_users):
+        name = user[0]
+        grade = user[1]
+        if j == n_groups:
+            j = 0
+        groups[j][name] = grade
+        j += 1
+    return groups
+>>>>>>> 62c2cd64b57e514e7e0a4d2cca057db3222c9049
